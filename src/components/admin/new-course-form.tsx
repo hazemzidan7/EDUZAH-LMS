@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { createCourse } from "@/lib/actions/courses";
+import { createCourse, uploadCourseBanner } from "@/lib/actions/courses";
 import { useLanguage } from "@/lib/language-context";
 import { translations } from "@/lib/translations";
 import { Card, Input, Textarea, Select, Button } from "@/components/ui";
@@ -35,16 +34,15 @@ export function NewCourseForm() {
     setError(null);
     try {
       if (file) {
-        const supabase = createClient();
-        const path = `banners/${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
-        const { error: uploadError } = await supabase.storage.from("submissions").upload(path, file);
-        if (uploadError) {
-          setError(`Image upload failed: ${uploadError.message}`);
+        const uploadData = new FormData();
+        uploadData.set("file", file);
+        const result = await uploadCourseBanner(uploadData);
+        if ("error" in result) {
+          setError(`Image upload failed: ${result.error}`);
           setLoading(false);
           return;
         }
-        const { data } = supabase.storage.from("submissions").getPublicUrl(path);
-        formData.set("banner_url", data.publicUrl);
+        formData.set("banner_url", result.url);
       }
       await createCourse(formData);
     } catch (e) {

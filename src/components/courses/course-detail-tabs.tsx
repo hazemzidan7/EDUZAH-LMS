@@ -11,9 +11,8 @@ import { MaterialIcon } from "@/components/material-icon";
 import { formatDate, isOverdue } from "@/lib/utils";
 import { useLanguage } from "@/lib/language-context";
 import { translations } from "@/lib/translations";
-import { createClient } from "@/lib/supabase/client";
 import { createSession } from "@/lib/actions/sessions";
-import { updateCourse, assignInstructor, removeInstructor, enrollStudent, unenrollStudent, deleteCourse } from "@/lib/actions/courses";
+import { updateCourse, assignInstructor, removeInstructor, enrollStudent, unenrollStudent, deleteCourse, uploadCourseBanner } from "@/lib/actions/courses";
 import { Plus, Calendar, ClipboardList, Users, X, Pencil, FolderOpen, Trash2, ImagePlus } from "lucide-react";
 import type { Course, Session, Material, Attendance, Submission, Profile, UserRole, CourseStatus } from "@/lib/types";
 
@@ -301,12 +300,11 @@ export function CourseDetailTabs({
           <form
             action={async (formData) => {
               if (editBannerFile) {
-                const supabase = createClient();
-                const path = `banners/${Date.now()}-${editBannerFile.name.replace(/\s+/g, "_")}`;
-                const { error: uploadError } = await supabase.storage.from("submissions").upload(path, editBannerFile);
-                if (!uploadError) {
-                  const { data } = supabase.storage.from("submissions").getPublicUrl(path);
-                  formData.set("banner_url", data.publicUrl);
+                const uploadData = new FormData();
+                uploadData.set("file", editBannerFile);
+                const result = await uploadCourseBanner(uploadData);
+                if ("url" in result) {
+                  formData.set("banner_url", result.url);
                 }
               } else if (!editBannerPreview) {
                 formData.set("banner_url", "");
