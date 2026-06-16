@@ -12,8 +12,8 @@ import { formatDate, isOverdue } from "@/lib/utils";
 import { useLanguage } from "@/lib/language-context";
 import { translations } from "@/lib/translations";
 import { createSession } from "@/lib/actions/sessions";
-import { updateCourse, assignInstructor, removeInstructor, enrollStudent, unenrollStudent } from "@/lib/actions/courses";
-import { Plus, Calendar, ClipboardList, Users, X, Pencil, FolderOpen } from "lucide-react";
+import { updateCourse, assignInstructor, removeInstructor, enrollStudent, unenrollStudent, deleteCourse } from "@/lib/actions/courses";
+import { Plus, Calendar, ClipboardList, Users, X, Pencil, FolderOpen, Trash2 } from "lucide-react";
 import type { Course, Session, Material, Attendance, Submission, Profile, UserRole, CourseStatus } from "@/lib/types";
 
 const CATEGORIES = [
@@ -75,6 +75,14 @@ export function CourseDetailTabs({
             <div className="flex shrink-0 gap-2">
               <Button variant="secondary" onClick={() => setAssignOpen(true)}><Users size={15} /> {tr.assignInstructor}</Button>
               <Button variant="secondary" onClick={() => setEditCourseOpen(true)}><Pencil size={15} /> {tr.edit}</Button>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  if (confirm(tr.deleteCourseConfirm)) deleteCourse(course.id);
+                }}
+              >
+                <Trash2 size={15} />
+              </Button>
             </div>
           )}
         </div>

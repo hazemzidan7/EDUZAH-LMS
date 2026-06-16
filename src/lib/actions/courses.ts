@@ -97,3 +97,11 @@ export async function unenrollStudent(courseId: string, studentId: string) {
   if (error) throw new Error(error.message);
   revalidatePath(`/courses/${courseId}`);
 }
+
+export async function deleteCourse(courseId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("courses").delete().eq("id", courseId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/courses");
+  redirect("/courses");
+}

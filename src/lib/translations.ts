@@ -153,6 +153,7 @@ export const translations = {
       statusDraft: "Draft",
       statusActive: "Active",
       statusArchived: "Archived",
+      deleteCourseConfirm: "Delete this course? This will remove all sessions, materials, and enrollments. This cannot be undone.",
     },
     materials: {
       title: "Materials",
@@ -410,6 +411,7 @@ export const translations = {
       statusDraft: "مسودة",
       statusActive: "نشط",
       statusArchived: "مؤرشف",
+      deleteCourseConfirm: "حذف هذا الكورس؟ سيتم حذف جميع الجلسات والمواد والتسجيلات. لا يمكن التراجع عن هذا.",
     },
     materials: {
       title: "المواد",
