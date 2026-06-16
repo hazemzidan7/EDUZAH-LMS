@@ -11,9 +11,10 @@ import { MaterialIcon } from "@/components/material-icon";
 import { formatDate, isOverdue } from "@/lib/utils";
 import { useLanguage } from "@/lib/language-context";
 import { translations } from "@/lib/translations";
+import { createClient } from "@/lib/supabase/client";
 import { createSession } from "@/lib/actions/sessions";
 import { updateCourse, assignInstructor, removeInstructor, enrollStudent, unenrollStudent, deleteCourse } from "@/lib/actions/courses";
-import { Plus, Calendar, ClipboardList, Users, X, Pencil, FolderOpen, Trash2 } from "lucide-react";
+import { Plus, Calendar, ClipboardList, Users, X, Pencil, FolderOpen, Trash2, ImagePlus } from "lucide-react";
 import type { Course, Session, Material, Attendance, Submission, Profile, UserRole, CourseStatus } from "@/lib/types";
 
 const CATEGORIES = ["Technology", "Management", "English", "Kids"];
@@ -32,6 +33,8 @@ export function CourseDetailTabs({
   const [editCourseOpen, setEditCourseOpen] = useState(false);
   const [enrollOpen, setEnrollOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
+  const [editBannerFile, setEditBannerFile] = useState<File | null>(null);
+  const [editBannerPreview, setEditBannerPreview] = useState<string | null>(course.banner_url ?? null);
   const { language } = useLanguage();
   const tr = translations[language].courseDetail;
 
@@ -294,8 +297,25 @@ export function CourseDetailTabs({
 
       {/* Edit Course Dialog */}
       {role === "admin" && (
-        <Dialog open={editCourseOpen} onOpenChange={setEditCourseOpen} title={tr.editCourseDialog.title}>
-          <form action={async (formData) => { await updateCourse(course.id, formData); setEditCourseOpen(false); }} className="space-y-3">
+        <Dialog open={editCourseOpen} onOpenChange={(open) => { setEditCourseOpen(open); if (!open) { setEditBannerFile(null); setEditBannerPreview(course.banner_url ?? null); } }} title={tr.editCourseDialog.title}>
+          <form
+            action={async (formData) => {
+              if (editBannerFile) {
+                const supabase = createClient();
+                const path = `banners/${Date.now()}-${editBannerFile.name.replace(/\s+/g, "_")}`;
+                const { error: uploadError } = await supabase.storage.from("course-banners").upload(path, editBannerFile);
+                if (!uploadError) {
+                  const { data } = supabase.storage.from("course-banners").getPublicUrl(path);
+                  formData.set("banner_url", data.publicUrl);
+                }
+              } else if (!editBannerPreview) {
+                formData.set("banner_url", "");
+              }
+              await updateCourse(course.id, formData);
+              setEditCourseOpen(false);
+            }}
+            className="space-y-3"
+          >
             <div className="space-y-1.5"><label className="text-sm font-medium text-foreground">{tr.formTitle}</label><Input name="title" required defaultValue={course.title} /></div>
             <div className="space-y-1.5"><label className="text-sm font-medium text-foreground">{tr.formDesc}</label><Textarea name="description" required rows={3} defaultValue={course.description} /></div>
             <div className="grid grid-cols-2 gap-3">
@@ -312,9 +332,22 @@ export function CourseDetailTabs({
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5"><label className="text-sm font-medium text-foreground">{tr.formDuration}</label><Input name="duration_text" defaultValue={course.duration_text ?? ""} /></div>
-              <div className="space-y-1.5"><label className="text-sm font-medium text-foreground">{tr.formBannerUrl}</label><Input name="banner_url" defaultValue={course.banner_url ?? ""} /></div>
+            <div className="space-y-1.5"><label className="text-sm font-medium text-foreground">{tr.formDuration}</label><Input name="duration_text" defaultValue={course.duration_text ?? ""} /></div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">{tr.formBannerImage}</label>
+              {editBannerPreview ? (
+                <div className="relative overflow-hidden rounded-xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={editBannerPreview} alt="Banner" className="h-36 w-full object-cover" />
+                  <button type="button" onClick={() => { setEditBannerFile(null); setEditBannerPreview(null); }} className="absolute right-2 top-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"><X size={14} /></button>
+                </div>
+              ) : (
+                <label className="flex h-36 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-surface-muted text-foreground/50 transition hover:border-primary/50 hover:text-primary/70">
+                  <ImagePlus size={24} />
+                  <span className="text-sm font-medium">{tr.clickToUpload}</span>
+                  <input type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setEditBannerFile(f); setEditBannerPreview(URL.createObjectURL(f)); } }} className="hidden" />
+                </label>
+              )}
             </div>
             <div className="flex justify-end gap-2 pt-2"><Button type="submit">{tr.saveChanges}</Button></div>
           </form>
