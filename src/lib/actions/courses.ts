@@ -15,14 +15,14 @@ export async function uploadCourseBanner(formData: FormData): Promise<{ url: str
   const buffer = Buffer.from(await file.arrayBuffer());
 
   const supabase = createAdminClient();
-  const { error } = await supabase.storage.from("submissions").upload(path, buffer, {
+  const { error } = await supabase.storage.from("course-banners").upload(path, buffer, {
     contentType: file.type,
     upsert: false,
   });
 
   if (error) return { error: error.message };
 
-  const { data } = supabase.storage.from("submissions").getPublicUrl(path);
+  const { data } = supabase.storage.from("course-banners").getPublicUrl(path);
   return { url: data.publicUrl };
 }
 
