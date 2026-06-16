@@ -3,7 +3,28 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { MaterialType } from "@/lib/types";
+
+export async function uploadMaterialFile(formData: FormData): Promise<{ url: string } | { error: string }> {
+  const file = formData.get("file") as File | null;
+  if (!file || file.size === 0) return { error: "No file provided" };
+
+  const ext = file.name.split(".").pop();
+  const path = `materials/${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  const supabase = createAdminClient();
+  const { error } = await supabase.storage.from("submissions").upload(path, buffer, {
+    contentType: file.type,
+    upsert: false,
+  });
+
+  if (error) return { error: error.message };
+
+  const { data } = supabase.storage.from("submissions").getPublicUrl(path);
+  return { url: data.publicUrl };
+}
 
 export async function createSession(courseId: string, formData: FormData) {
   const supabase = await createClient();
