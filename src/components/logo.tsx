@@ -16,7 +16,7 @@ export function Logo({ className, height = 32 }: { className?: string; height?: 
     >
       {language === "ar" && !arImgError ? (
         <Image
-          src="/logo-ar.png"
+          src="/logo_AR.PNG"
           alt="إيدوزا"
           width={height * 3.4}
           height={height}
