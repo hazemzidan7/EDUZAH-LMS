@@ -6,6 +6,8 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
+import { useLanguage } from "@/lib/language-context";
+import { translations } from "@/lib/translations";
 import type { UserRole } from "@/lib/types";
 import {
   LayoutDashboard,
@@ -23,23 +25,25 @@ interface SidebarProps {
   role: UserRole;
 }
 
-const baseLinks = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/courses", label: "Courses", icon: BookOpen },
-];
-
-const adminLinks = [
-  { href: "/admin/instructors", label: "Instructors", icon: GraduationCap },
-  { href: "/admin/students", label: "Students", icon: Users },
-  { href: "/admin/reports", label: "Reports", icon: BarChart3 },
-];
-
-const tailLinks = [{ href: "/notifications", label: "Notifications", icon: Bell }];
-
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const { language } = useLanguage();
+  const tr = translations[language];
+
+  const baseLinks = [
+    { href: "/dashboard", label: tr.nav.dashboard, icon: LayoutDashboard },
+    { href: "/courses", label: tr.nav.courses, icon: BookOpen },
+  ];
+
+  const adminLinks = [
+    { href: "/admin/instructors", label: tr.nav.instructors, icon: GraduationCap },
+    { href: "/admin/students", label: tr.nav.students, icon: Users },
+    { href: "/admin/reports", label: tr.nav.reports, icon: BarChart3 },
+  ];
+
+  const tailLinks = [{ href: "/notifications", label: tr.nav.notifications, icon: Bell }];
 
   const links = [...baseLinks, ...(role === "admin" ? adminLinks : []), ...tailLinks];
 
@@ -54,7 +58,7 @@ export function Sidebar({ role }: SidebarProps) {
     <div className="flex h-full flex-col">
       <div className="flex flex-col gap-2 px-5 py-5">
         <Logo height={32} />
-        <p className="text-xs font-medium capitalize tracking-wide text-foreground/50">{role} portal</p>
+        <p className="text-xs font-medium capitalize tracking-wide text-foreground/50">{tr.portal[role]}</p>
       </div>
 
       <nav className="flex-1 space-y-1 px-3">
@@ -86,7 +90,7 @@ export function Sidebar({ role }: SidebarProps) {
           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground/70 transition hover:bg-surface-muted hover:text-danger"
         >
           <LogOut size={18} />
-          Sign out
+          {tr.nav.signOut}
         </button>
       </div>
     </div>
