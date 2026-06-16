@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Search, BookOpen, User } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
+import { translations } from "@/lib/translations";
 import type { UserRole } from "@/lib/types";
 
 interface ResultItem {
@@ -16,6 +18,8 @@ interface ResultItem {
 
 export function GlobalSearch({ role }: { role: UserRole }) {
   const router = useRouter();
+  const { language } = useLanguage();
+  const tr = translations[language];
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ResultItem[]>([]);
   const [open, setOpen] = useState(false);
@@ -83,7 +87,7 @@ export function GlobalSearch({ role }: { role: UserRole }) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
-        placeholder="Search courses, people..."
+        placeholder={tr.search.placeholder}
         className="w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground outline-none ring-primary/30 transition focus:ring-2"
       />
       {open && results.length > 0 && (

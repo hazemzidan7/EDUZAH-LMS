@@ -25,7 +25,7 @@ export default async function CoursesPage() {
     const { data: enrollments } = await supabase.from("enrollments").select("course_id");
     const counts = new Map<string, number>();
     (enrollments ?? []).forEach((e) => counts.set(e.course_id, (counts.get(e.course_id) ?? 0) + 1));
-    courses.forEach((c) => { metaMap[c.id] = `${counts.get(c.id) ?? 0} students`; });
+    courses.forEach((c) => { metaMap[c.id] = String(counts.get(c.id) ?? 0); });
   } else if (role === "instructor") {
     const { data: assignments } = await supabase.from("course_instructors").select("course_id").eq("instructor_id", user.id);
     const courseIds = (assignments ?? []).map((a) => a.course_id);
@@ -36,7 +36,7 @@ export default async function CoursesPage() {
       const { data: enrollments } = await supabase.from("enrollments").select("course_id").in("course_id", courseIds);
       const counts = new Map<string, number>();
       (enrollments ?? []).forEach((e) => counts.set(e.course_id, (counts.get(e.course_id) ?? 0) + 1));
-      courses.forEach((c) => { metaMap[c.id] = `${counts.get(c.id) ?? 0} students`; });
+      courses.forEach((c) => { metaMap[c.id] = String(counts.get(c.id) ?? 0); });
     }
   } else {
     const { data: enrollments } = await supabase.from("enrollments").select("course_id").eq("student_id", user.id);

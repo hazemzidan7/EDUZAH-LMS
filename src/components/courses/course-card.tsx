@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { CourseStatusBadge, ProgressBar, Badge } from "@/components/ui";
 import { BookOpen, Clock, Users } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
+import { translations } from "@/lib/translations";
 import type { Course } from "@/lib/types";
 
 export function CourseCard({
@@ -14,6 +18,9 @@ export function CourseCard({
   progress?: number;
   meta?: string;
 }) {
+  const { language } = useLanguage();
+  const tr = translations[language].courses;
+
   return (
     <Link
       href={`/courses/${course.id}`}
@@ -42,14 +49,14 @@ export function CourseCard({
           )}
           {meta && (
             <span className="flex items-center gap-1">
-              <Users size={13} /> {meta}
+              <Users size={13} /> {meta} {tr.students}
             </span>
           )}
         </div>
         {progress !== undefined && (
           <div className="pt-1">
             <ProgressBar value={progress} />
-            <p className="mt-1 text-xs text-foreground/50">{progress}% complete</p>
+            <p className="mt-1 text-xs text-foreground/50">{progress}% {tr.complete}</p>
           </div>
         )}
       </div>

@@ -35,6 +35,15 @@ export const translations = {
     search: {
       placeholder: "Search courses, people...",
     },
+    courses: {
+      searchPlaceholder: "Search courses...",
+      allCategories: "All categories",
+      noCoursesFound: "No courses found",
+      noCoursesDesc: "Try adjusting your search or filters.",
+      students: "students",
+      complete: "complete",
+      newCourse: "+ New Course",
+    },
     dashboard: {
       title: "Dashboard",
       studentSubtitle: "Here's your learning progress",
@@ -123,6 +132,15 @@ export const translations = {
     },
     search: {
       placeholder: "ابحث عن كورسات أو أشخاص...",
+    },
+    courses: {
+      searchPlaceholder: "ابحث عن كورسات...",
+      allCategories: "كل الفئات",
+      noCoursesFound: "لا توجد كورسات",
+      noCoursesDesc: "حاول تعديل البحث أو الفلاتر.",
+      students: "طالب",
+      complete: "مكتمل",
+      newCourse: "+ كورس جديد",
     },
     dashboard: {
       title: "لوحة التحكم",
