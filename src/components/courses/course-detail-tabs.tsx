@@ -303,9 +303,9 @@ export function CourseDetailTabs({
               if (editBannerFile) {
                 const supabase = createClient();
                 const path = `banners/${Date.now()}-${editBannerFile.name.replace(/\s+/g, "_")}`;
-                const { error: uploadError } = await supabase.storage.from("course-banners").upload(path, editBannerFile);
+                const { error: uploadError } = await supabase.storage.from("submissions").upload(path, editBannerFile);
                 if (!uploadError) {
-                  const { data } = supabase.storage.from("course-banners").getPublicUrl(path);
+                  const { data } = supabase.storage.from("submissions").getPublicUrl(path);
                   formData.set("banner_url", data.publicUrl);
                 }
               } else if (!editBannerPreview) {
