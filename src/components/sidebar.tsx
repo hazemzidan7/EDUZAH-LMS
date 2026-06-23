@@ -19,6 +19,7 @@ import {
   LogOut,
   Menu,
   X,
+  ClipboardList,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -41,6 +42,7 @@ export function Sidebar({ role }: SidebarProps) {
     { href: "/admin/instructors", label: tr.nav.instructors, icon: GraduationCap },
     { href: "/admin/students", label: tr.nav.students, icon: Users },
     { href: "/admin/reports", label: tr.nav.reports, icon: BarChart3 },
+    { href: "/admin/applications", label: "Applications", icon: ClipboardList },
   ];
 
   const tailLinks = [{ href: "/notifications", label: tr.nav.notifications, icon: Bell }];

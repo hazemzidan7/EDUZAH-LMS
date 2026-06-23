@@ -27,7 +27,7 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isAuthPage = path === "/login" || path === "/forgot-password" || path === "/reset-password";
-  const isPublic = path === "/" || isAuthPage;
+  const isPublic = path === "/" || isAuthPage || path.startsWith("/apply");
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
