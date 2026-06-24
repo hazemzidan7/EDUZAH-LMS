@@ -420,9 +420,24 @@ export function ApplyForm() {
           <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">
             Internship & Team Application
           </h1>
-          <p className="text-white/80 text-sm max-w-xl">
+              <p className="text-white/80 text-sm max-w-xl">
             Thank you for your interest in joining EDUZAH. Please complete all required information accurately.
           </p>
+
+          {/* Last year's interns photo */}
+          <div className="mt-6 rounded-2xl overflow-hidden relative">
+            <img
+              src="/interns-2024.jpg"
+              alt="EDUZAH Interns 2024"
+              className="w-full object-cover max-h-72"
+              style={{ objectPosition: "center top" }}
+            />
+            <div className="absolute bottom-0 left-0 right-0 px-4 py-3"
+              style={{ background: "linear-gradient(to top, rgba(50,29,61,0.85), transparent)" }}>
+              <p className="text-white font-semibold text-sm">Our Interns — Last Season</p>
+              <p className="text-white/70 text-xs">Join the next generation of EDUZAH team members</p>
+            </div>
+          </div>
         </div>
       </header>
 
