@@ -412,32 +412,30 @@ export function ApplyForm() {
     <div className="min-h-screen" style={{ background: "#F8F7FF" }} ref={topRef}>
 
       {/* Header */}
-      <header className="py-8 px-4" style={{ background: "linear-gradient(135deg, #321d3d 0%, #672d86 100%)" }}>
-        <div className="max-w-3xl mx-auto">
-          <div className="mb-4">
+      <header className="relative overflow-hidden" style={{ minHeight: 340 }}>
+        <img
+          src="/interns-2024.jpg"
+          alt="EDUZAH Interns"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: "center 20%" }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(135deg, rgba(50,29,61,0.93) 0%, rgba(103,45,134,0.80) 100%)" }}
+        />
+        <div className="relative z-10 max-w-3xl mx-auto px-4 py-10">
+          <div className="mb-5">
             <Logo height={36} />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
             Internship & Team Application
           </h1>
-              <p className="text-white/80 text-sm max-w-xl">
+          <p className="text-white/80 text-sm max-w-xl leading-relaxed">
             Thank you for your interest in joining EDUZAH. Please complete all required information accurately.
           </p>
-
-          {/* Last year's interns photo */}
-          <div className="mt-6 rounded-2xl overflow-hidden relative">
-            <img
-              src="/interns-2024.jpg"
-              alt="EDUZAH Interns 2024"
-              className="w-full object-cover max-h-72"
-              style={{ objectPosition: "center top" }}
-            />
-            <div className="absolute bottom-0 left-0 right-0 px-4 py-3"
-              style={{ background: "linear-gradient(to top, rgba(50,29,61,0.85), transparent)" }}>
-              <p className="text-white font-semibold text-sm">Our Interns — Last Season</p>
-              <p className="text-white/70 text-xs">Join the next generation of EDUZAH team members</p>
-            </div>
-          </div>
+          <p className="text-white/50 text-xs mt-5 uppercase tracking-widest font-medium">
+            Our team — last season
+          </p>
         </div>
       </header>
 
