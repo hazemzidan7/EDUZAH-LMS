@@ -347,21 +347,55 @@ export function ApplyForm() {
   // ─── Submit ──────────────────────────────────────────────────────────────────
 
   const submit = async () => {
-    const e: Record<string, string> = {};
-    if (!data.cvUrl) e.cvUrl = "CV upload is required";
-    // Portfolio links validation based on position
+    // Comprehensive validation across all steps
+    const missing: string[] = [];
+
+    // Step 1
+    if (!data.fullName.trim()) missing.push("Full Name (Step 1)");
+    if (!data.whatsapp.trim()) missing.push("WhatsApp Number (Step 1)");
+    if (!data.email.trim()) missing.push("Email Address (Step 1)");
+    if (!data.dateOfBirth) missing.push("Date of Birth (Step 1)");
+    if (!data.governorate) missing.push("Governorate (Step 1)");
+    if (!data.city.trim()) missing.push("City (Step 1)");
+
+    // Step 2
+    if (!data.university.trim()) missing.push("University (Step 2)");
+    if (!data.faculty.trim()) missing.push("Faculty (Step 2)");
+    if (!data.department.trim()) missing.push("Department (Step 2)");
+    if (!data.academicStatus) missing.push("Academic Status (Step 2)");
+    if (!data.graduationYear) missing.push("Graduation Year (Step 2)");
+
+    // Step 3
+    if (!data.position) missing.push("Position (Step 3)");
+
+    // Step 6 — CV + required portfolio links
+    if (!data.cvUrl) missing.push("CV Upload (Step 6)");
     const pc = data.position ? (PORTFOLIO_CONFIG[data.position] ?? DEFAULT_PORTFOLIO) : DEFAULT_PORTFOLIO;
-    if (pc.github    === "required" && !data.githubLink.trim())      e.githubLink     = "GitHub link is required for this position";
-    if (pc.portfolio === "required" && !data.portfolioLink.trim())   e.portfolioLink  = "Portfolio link is required for this position";
-    if (pc.behance   === "required" && !data.behanceLink.trim())     e.behanceLink    = "Behance link is required for this position";
-    if (!data.whyJoin.trim()) e.whyJoin = "Required";
-    if (!data.skillsToGain.trim()) e.skillsToGain = "Required";
-    if (!data.valueAdded.trim()) e.valueAdded = "Required";
-    if (!data.oneYearVision.trim()) e.oneYearVision = "Required";
+    if (pc.github    === "required" && !data.githubLink.trim())    missing.push("GitHub Link (Step 6)");
+    if (pc.portfolio === "required" && !data.portfolioLink.trim()) missing.push("Portfolio Link (Step 6)");
+    if (pc.behance   === "required" && !data.behanceLink.trim())   missing.push("Behance Link (Step 6)");
+
+    // Step 7
+    if (!data.hoursPerWeek) missing.push("Available Hours (Step 7)");
+
+    // Step 8
+    if (!data.whyJoin.trim()) missing.push("Why join EDUZAH? (Step 8)");
+    if (!data.skillsToGain.trim()) missing.push("Skills to gain (Step 8)");
+    if (!data.valueAdded.trim()) missing.push("Value added (Step 8)");
+    if (!data.oneYearVision.trim()) missing.push("One-year vision (Step 8)");
+
+    // Step 9
+    const e: Record<string, string> = {};
     if (!data.confirmAccurate) e.confirmAccurate = "Required";
-    if (!data.confirmUnpaid) e.confirmUnpaid = "Required";
-    if (!data.agreePolicy) e.agreePolicy = "Required";
-    if (!data.agreeContact) e.agreeContact = "Required";
+    if (!data.confirmUnpaid)   e.confirmUnpaid   = "Required";
+    if (!data.agreePolicy)     e.agreePolicy     = "Required";
+    if (!data.agreeContact)    e.agreeContact    = "Required";
+
+    if (missing.length > 0) {
+      setSubmitError("Please complete the following fields before submitting:\n• " + missing.join("\n• "));
+      setErrors(e);
+      return;
+    }
     if (Object.keys(e).length) { setErrors(e); return; }
 
     setIsSubmitting(true);
@@ -886,7 +920,7 @@ export function ApplyForm() {
                   ))}
 
                   {submitError && (
-                    <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600">
+                    <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600 whitespace-pre-line">
                       {submitError}
                     </div>
                   )}

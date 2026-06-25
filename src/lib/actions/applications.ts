@@ -98,7 +98,7 @@ export async function submitApplication(
       faculty: application.faculty,
       department: application.department,
       academic_status: application.academicStatus,
-      graduation_year: parseInt(application.graduationYear),
+      graduation_year: application.graduationYear === "Other" ? 0 : parseInt(application.graduationYear),
       gpa: application.gpa || null,
       academic_achievements: application.academicAchievements || null,
       position: application.position,
