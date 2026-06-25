@@ -444,14 +444,12 @@ export function ApplyForm() {
 
         {/* Text */}
         <div className="relative z-10" style={{ padding: "40px 32px", maxWidth: 500 }}>
-          <div style={{ marginBottom: 20 }}>
-            <img src="/logo.png" alt="EDUZAH" style={{ height: 34, width: "auto" }} />
-          </div>
+          <div style={{ marginBottom: 20 }}><Logo height={34} /></div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white" style={{ marginBottom: 10 }}>
             Internship & Team Application
           </h1>
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.6, marginBottom: 16 }}>
-            Thank you for your interest in joining EDUZAH. Please complete all required information accurately.
+            Thank you for your interest in joining EDUZAH Internship. Please complete all required information accurately.
           </p>
           <p className="text-xs uppercase" style={{ color: "rgba(255,255,255,0.45)", letterSpacing: "0.1em" }}>
             Our team — last season
