@@ -9,21 +9,6 @@ import type { ApplicationData } from "@/lib/actions/applications";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const HEADER_IMAGES = [
-  "/567654572_122137894472813844_4354580495115461497_n.jpg",
-  "/566222648_122137894484813844_2634875105105746725_n.jpg",
-  "/567130159_122137894664813844_2724487115061981488_n.jpg",
-  "/566209724_122137894556813844_3096815446003175820_n.jpg",
-  "/565705507_122137894616813844_1217385431349264804_n.jpg",
-  "/568115591_122137894460813844_275207714021462090_n.jpg",
-  "/566224148_122137894544813844_6324125913235075860_n.jpg",
-  "/566334375_122137894496813844_7368622175422693217_n.jpg",
-  "/566225068_122137894736813844_8950860276675253843_n.jpg",
-  "/566222962_122137894724813844_6691464258559634610_n.jpg",
-  "/565703549_122137894640813844_3705069987525856593_n.jpg",
-  "/566202763_122137894784813844_3047834751498864968_n.jpg",
-  "/566205399_122137894592813844_1515074371241572226_n.jpg",
-];
 
 const TOTAL_STEPS = 9;
 const STORAGE_KEY = "eduzah-application-draft-v2";
@@ -301,14 +286,6 @@ export function ApplyForm() {
   const [cvUploading, setCvUploading] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [hasDraft, setHasDraft] = useState(false);
-  const [imgIndex, setImgIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setImgIndex((i) => (i + 1) % HEADER_IMAGES.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
   const fileRef = useRef<HTMLInputElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -457,47 +434,18 @@ export function ApplyForm() {
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.72)", lineHeight: 1.6, marginBottom: 16 }}>
             Thank you for your interest in joining EDUZAH. Please complete all required information accurately.
           </p>
-          <p className="text-xs uppercase" style={{ color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em", marginBottom: 14 }}>
+          <p className="text-xs uppercase" style={{ color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em" }}>
             Our team — last season
           </p>
-          <div style={{ display: "flex", gap: 6 }}>
-            {HEADER_IMAGES.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setImgIndex(i)}
-                style={{
-                  height: 5, borderRadius: 99, border: "none", cursor: "pointer",
-                  width: i === imgIndex ? 18 : 5,
-                  background: i === imgIndex ? "#faa633" : "rgba(255,255,255,0.3)",
-                  transition: "all 300ms",
-                  padding: 0,
-                }}
-              />
-            ))}
-          </div>
         </div>
 
-        {/* Right — photo carousel, full image, no crop */}
-        <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
-          {HEADER_IMAGES.map((src, i) => (
-            <img
-              key={src}
-              src={src}
-              alt="EDUZAH Team"
-              loading={i === 0 ? "eager" : "lazy"}
-              style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                objectPosition: "center center",
-                background: "#321d3d",
-                opacity: i === imgIndex ? 1 : 0,
-                transition: "opacity 800ms ease-in-out",
-              }}
-            />
-          ))}
+        {/* Right — team photo */}
+        <div style={{ flex: 1, overflow: "hidden" }}>
+          <img
+            src="/team-photo.jpg"
+            alt="EDUZAH Team"
+            style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center center", background: "#321d3d" }}
+          />
         </div>
 
       </header>
