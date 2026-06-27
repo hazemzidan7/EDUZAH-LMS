@@ -17,8 +17,11 @@ export const metadata: Metadata = {
   title: "EDUZAH Internship",
   description: "EDUZAH Internship & Team Application",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: [
+      { url: "/icon.png", type: "image/png", sizes: "any" },
+    ],
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
 };
 
