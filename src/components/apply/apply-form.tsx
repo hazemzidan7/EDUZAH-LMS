@@ -420,7 +420,68 @@ export function ApplyForm() {
 
   const scrollTop = () => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const next = () => { setStep((s) => Math.min(s + 1, TOTAL_STEPS)); scrollTop(); };
+  const validateStep = (s: number): Record<string, string> => {
+    const e: Record<string, string> = {};
+    if (s === 1) {
+      if (!data.nationality)                                        e.nationality   = "Please select your nationality";
+      if (data.nationality === "Egyptian" && !data.nationalId.trim()) e.nationalId  = "National ID is required";
+      if (!data.fullName.trim())                                    e.fullName      = "Full name is required";
+      if (!data.whatsapp.trim())                                    e.whatsapp      = "WhatsApp number is required";
+      if (!data.email.trim())                                       e.email         = "Email is required";
+      else if (!/\S+@\S+\.\S+/.test(data.email))                   e.email         = "Invalid email address";
+      if (!data.dateOfBirth)                                        e.dateOfBirth   = "Date of birth is required";
+      if (!data.governorate)                                        e.governorate   = "Governorate is required";
+      if (!data.city.trim())                                        e.city          = "City is required";
+      if (!data.linkedinLink.trim())                                e.linkedinLink  = "LinkedIn profile link is required";
+      else if (!urlMatchesDomain(data.linkedinLink, "linkedin.com")) e.linkedinLink = "Must be a valid linkedin.com link";
+    }
+    if (s === 2) {
+      if (!data.university.trim())  e.university    = "University is required";
+      if (!data.faculty.trim())     e.faculty       = "Faculty is required";
+      if (!data.department.trim())  e.department    = "Department is required";
+      if (!data.academicStatus)     e.academicStatus = "Academic status is required";
+      if (!data.graduationYear)     e.graduationYear = "Graduation year is required";
+    }
+    if (s === 3) {
+      if (!data.position) e.position = "Please select a position";
+    }
+    if (s === 4) {
+      const ratingFields = (SKILLS_CONFIG[data.position] ?? []).filter(f => f.type === "rating");
+      const empty = ratingFields.filter(f => !data.skills[f.key]);
+      if (empty.length > 0) e.skills = `Please rate all skills (missing: ${empty.map(f => f.label).join(", ")})`;
+    }
+    if (s === 5) {
+      if (!data.hasExperience) e.hasExperience = "Please answer this question";
+    }
+    if (s === 6) {
+      if (!data.cvUrl) e.cvUrl = "CV upload is required";
+      const pc = data.position ? (PORTFOLIO_CONFIG[data.position] ?? DEFAULT_PORTFOLIO) : DEFAULT_PORTFOLIO;
+      if (pc.github    === "required" && !data.githubLink.trim())    e.githubLink    = "GitHub link is required";
+      else if (data.githubLink.trim()    && !urlMatchesDomain(data.githubLink,    "github.com"))   e.githubLink    = "Must be a github.com link";
+      if (pc.portfolio === "required" && !data.portfolioLink.trim()) e.portfolioLink = "Portfolio link is required";
+      if (pc.behance   === "required" && !data.behanceLink.trim())   e.behanceLink   = "Behance link is required";
+      else if (data.behanceLink.trim()   && !urlMatchesDomain(data.behanceLink,   "behance.net"))  e.behanceLink   = "Must be a behance.net link";
+    }
+    if (s === 7) {
+      if (!data.hoursPerWeek)                e.hoursPerWeek   = "Please select available hours";
+      if (data.preferredDays.length === 0)   e.preferredDays  = "Please select at least one day";
+    }
+    if (s === 8) {
+      if (!data.whyJoin.trim())        e.whyJoin       = "This field is required";
+      if (!data.skillsToGain.trim())   e.skillsToGain  = "This field is required";
+      if (!data.valueAdded.trim())     e.valueAdded    = "This field is required";
+      if (!data.oneYearVision.trim())  e.oneYearVision = "This field is required";
+    }
+    return e;
+  };
+
+  const next = () => {
+    const e = validateStep(step);
+    if (Object.keys(e).length > 0) { setErrors(e); return; }
+    setErrors({});
+    setStep((s) => Math.min(s + 1, TOTAL_STEPS));
+    scrollTop();
+  };
   const prev = () => { setStep((s) => Math.max(s - 1, 1)); scrollTop(); };
 
   // ─── CV Upload ──────────────────────────────────────────────────────────────
