@@ -100,7 +100,8 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="brand-gradient flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-accent/20 transition hover:opacity-90 hover:shadow-lg hover:shadow-accent/30 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+            style={{ background: "linear-gradient(135deg,#d91b5b,#faa633)" }}
           >
             {loading && <Loader2 size={16} className="animate-spin" />}
             Sign in
@@ -121,7 +122,8 @@ export default function LoginPage() {
           </p>
           <Link
             href="/apply"
-            className="brand-gradient inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-accent/20 transition hover:opacity-90"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+            style={{ background: "linear-gradient(135deg,#d91b5b,#faa633)" }}
           >
             Apply Now →
           </Link>
