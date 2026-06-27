@@ -153,6 +153,22 @@ const PORTFOLIO_CONFIG: Record<string, PortfolioConfig> = {
 
 const DEFAULT_PORTFOLIO: PortfolioConfig = { portfolio: "optional", github: "optional", behance: "optional", website: "optional" };
 
+// ─── URL Validators ───────────────────────────────────────────────────────────
+
+function isValidUrl(url: string): boolean {
+  if (!url.trim()) return true;
+  try { new URL(url.startsWith("http") ? url : `https://${url}`); return true; }
+  catch { return false; }
+}
+
+function urlMatchesDomain(url: string, domain: string): boolean {
+  if (!url.trim()) return true;
+  try {
+    const u = new URL(url.startsWith("http") ? url : `https://${url}`);
+    return u.hostname.includes(domain);
+  } catch { return false; }
+}
+
 // ─── Form State ───────────────────────────────────────────────────────────────
 
 interface Experience {
@@ -392,6 +408,9 @@ export function ApplyForm() {
     if (!data.dateOfBirth) missing.push("Date of Birth (Step 1)");
     if (!data.governorate) missing.push("Governorate (Step 1)");
     if (!data.city.trim()) missing.push("City (Step 1)");
+    // LinkedIn required
+    if (!data.linkedinLink.trim()) missing.push("LinkedIn Profile Link (Step 1)");
+    else if (!urlMatchesDomain(data.linkedinLink, "linkedin.com")) missing.push("LinkedIn link must be a valid linkedin.com URL (Step 1)");
 
     // Step 2
     if (!data.university.trim()) missing.push("University (Step 2)");
@@ -403,12 +422,42 @@ export function ApplyForm() {
     // Step 3
     if (!data.position) missing.push("Position (Step 3)");
 
-    // Step 6 — CV + required portfolio links
+    // Step 4 — Skills required (rating fields must be filled)
+    if (data.position) {
+      const skillFields = SKILLS_CONFIG[data.position] ?? [];
+      const ratingFields = skillFields.filter(f => f.type === "rating");
+      const emptyRatings = ratingFields.filter(f => !data.skills[f.key]);
+      if (emptyRatings.length > 0) {
+        missing.push(`Please rate all skills in Step 4 (missing: ${emptyRatings.map(f => f.label).join(", ")})`);
+      }
+      // Validate skill URLs (kaggle must be kaggle.com)
+      if (data.skills["kaggle"] && !urlMatchesDomain(data.skills["kaggle"], "kaggle.com"))
+        missing.push("Kaggle link must be a valid kaggle.com URL (Step 4)");
+    }
+
+    // Step 6 — CV + required portfolio links with domain validation
     if (!data.cvUrl) missing.push("CV Upload (Step 6)");
     const pc = data.position ? (PORTFOLIO_CONFIG[data.position] ?? DEFAULT_PORTFOLIO) : DEFAULT_PORTFOLIO;
-    if (pc.github    === "required" && !data.githubLink.trim())    missing.push("GitHub Link (Step 6)");
-    if (pc.portfolio === "required" && !data.portfolioLink.trim()) missing.push("Portfolio Link (Step 6)");
-    if (pc.behance   === "required" && !data.behanceLink.trim())   missing.push("Behance Link (Step 6)");
+    if (pc.github === "required") {
+      if (!data.githubLink.trim()) missing.push("GitHub Link is required (Step 6)");
+      else if (!urlMatchesDomain(data.githubLink, "github.com")) missing.push("GitHub link must be a valid github.com URL (Step 6)");
+    } else if (data.githubLink.trim() && !urlMatchesDomain(data.githubLink, "github.com")) {
+      missing.push("GitHub link must be a valid github.com URL (Step 6)");
+    }
+    if (pc.portfolio === "required") {
+      if (!data.portfolioLink.trim()) missing.push("Portfolio Link is required (Step 6)");
+      else if (!isValidUrl(data.portfolioLink)) missing.push("Portfolio link must be a valid URL (Step 6)");
+    } else if (data.portfolioLink.trim() && !isValidUrl(data.portfolioLink)) {
+      missing.push("Portfolio link must be a valid URL (Step 6)");
+    }
+    if (pc.behance === "required") {
+      if (!data.behanceLink.trim()) missing.push("Behance Link is required (Step 6)");
+      else if (!urlMatchesDomain(data.behanceLink, "behance.net")) missing.push("Behance link must be a valid behance.net URL (Step 6)");
+    } else if (data.behanceLink.trim() && !urlMatchesDomain(data.behanceLink, "behance.net")) {
+      missing.push("Behance link must be a valid behance.net URL (Step 6)");
+    }
+    if (data.personalWebsite.trim() && !isValidUrl(data.personalWebsite))
+      missing.push("Personal website must be a valid URL (Step 6)");
 
     // Step 7
     if (!data.hoursPerWeek) missing.push("Available Hours (Step 7)");
@@ -693,8 +742,11 @@ export function ApplyForm() {
                     <Input value={data.currentAddress} onChange={(v) => update("currentAddress", v)} placeholder="Street, area..." />
                   </Field>
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <Field label="LinkedIn Profile Link" error={errors.linkedinLink}>
-                      <Input value={data.linkedinLink} onChange={(v) => update("linkedinLink", v)} placeholder="https://linkedin.com/in/..." type="url" />
+                    <Field label="LinkedIn Profile Link" required error={errors.linkedinLink}>
+                      <Input value={data.linkedinLink} onChange={(v) => update("linkedinLink", v)} placeholder="https://linkedin.com/in/username" type="url" />
+                      {data.linkedinLink.trim() && !urlMatchesDomain(data.linkedinLink, "linkedin.com") && (
+                        <p className="text-xs text-red-400 mt-1">Must be a linkedin.com link</p>
+                      )}
                     </Field>
                   </div>
                 </div>
@@ -883,20 +935,28 @@ export function ApplyForm() {
                   </Field>
                   {(() => {
                     const pc = data.position ? (PORTFOLIO_CONFIG[data.position] ?? DEFAULT_PORTFOLIO) : DEFAULT_PORTFOLIO;
-                    const fields: { key: keyof FormState; label: string; placeholder: string; vis: LinkVis }[] = [
-                      { key: "githubLink",     label: "GitHub Link",      placeholder: "https://github.com/...",  vis: pc.github    },
-                      { key: "portfolioLink",  label: "Portfolio Link",   placeholder: "https://...",              vis: pc.portfolio  },
-                      { key: "behanceLink",    label: "Behance Link",     placeholder: "https://behance.net/...", vis: pc.behance   },
-                      { key: "personalWebsite",label: "Personal Website", placeholder: "https://yoursite.com",    vis: pc.website   },
+                    type LinkField = { key: keyof FormState; label: string; placeholder: string; vis: LinkVis; domain?: string };
+                    const fields: LinkField[] = [
+                      { key: "githubLink",     label: "GitHub Link",      placeholder: "https://github.com/username",  vis: pc.github,   domain: "github.com"   },
+                      { key: "portfolioLink",  label: "Portfolio Link",   placeholder: "https://yourportfolio.com",    vis: pc.portfolio                         },
+                      { key: "behanceLink",    label: "Behance Link",     placeholder: "https://behance.net/username", vis: pc.behance,  domain: "behance.net"  },
+                      { key: "personalWebsite",label: "Personal Website", placeholder: "https://yoursite.com",         vis: pc.website                           },
                     ];
                     const visible = fields.filter(f => f.vis !== "hidden");
                     return (
                       <div className="grid sm:grid-cols-2 gap-4">
-                        {visible.map(f => (
-                          <Field key={f.key} label={`${f.label}${f.vis === "required" ? "" : " (Optional)"}`} required={f.vis === "required"} error={errors[f.key]}>
-                            <Input value={(data as unknown as Record<string,string>)[f.key]} onChange={(v) => update(f.key, v)} type="url" placeholder={f.placeholder} />
-                          </Field>
-                        ))}
+                        {visible.map(f => {
+                          const val = (data as unknown as Record<string,string>)[f.key];
+                          const wrongDomain = f.domain && val.trim() && !urlMatchesDomain(val, f.domain);
+                          return (
+                            <Field key={f.key} label={`${f.label}${f.vis === "required" ? "" : " (Optional)"}`} required={f.vis === "required"} error={errors[f.key]}>
+                              <Input value={val} onChange={(v) => update(f.key, v)} type="url" placeholder={f.placeholder} />
+                              {wrongDomain && (
+                                <p className="text-xs text-red-400 mt-1">Must be a {f.domain} link</p>
+                              )}
+                            </Field>
+                          );
+                        })}
                       </div>
                     );
                   })()}
