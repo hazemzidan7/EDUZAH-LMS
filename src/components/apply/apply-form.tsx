@@ -899,7 +899,7 @@ export function ApplyForm() {
                           <Input
                             value={data.eduzahServiceName}
                             onChange={(v) => update("eduzahServiceName", v)}
-                            placeholder="e.g. English Course, Digital Marketing..."
+                            placeholder="e.g. Frontend, Data Analysis, UI/UX..."
                           />
                         </Field>
                       </div>
