@@ -474,6 +474,23 @@ export function AdminPortalDashboard({
                 </div>
               </DrawerCard>
 
+              {/* EDUZAH Previous Service */}
+              {(selected as any).had_eduzah_service && (
+                <div className="rounded-2xl p-4 border-2 flex items-start gap-3"
+                  style={{ borderColor: "#d91b5b", background: "#fff5f7" }}>
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                    style={{ background: "linear-gradient(135deg,#d91b5b,#faa633)" }}>E</div>
+                  <div>
+                    <p className="text-xs font-bold text-[#d91b5b] uppercase tracking-wide">Previous EDUZAH Client</p>
+                    <p className="text-sm font-semibold text-gray-800 mt-0.5">
+                      {(selected as any).had_eduzah_service === "Yes"
+                        ? ((selected as any).eduzah_service_name || "Yes — service not specified")
+                        : "No previous EDUZAH service"}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* Personal */}
               <DrawerCard title="Personal Information" accent="#672d86">
                 <div className="grid grid-cols-2 gap-2">

@@ -6,6 +6,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export interface ApplicationData {
   nationality: string;
   nationalId: string;
+  hadEduzahService: string;
+  eduzahServiceName: string;
   fullName: string;
   mobile: string;
   whatsapp: string;
@@ -102,6 +104,8 @@ export async function submitApplication(
     .insert({
       nationality: application.nationality || null,
       national_id: application.nationalId || null,
+      had_eduzah_service: application.hadEduzahService || null,
+      eduzah_service_name: application.eduzahServiceName || null,
       full_name: application.fullName,
       mobile: application.mobile,
       whatsapp: application.whatsapp,

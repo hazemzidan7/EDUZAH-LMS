@@ -243,6 +243,8 @@ interface FormState {
   fullName: string; whatsapp: string; email: string;
   dateOfBirth: string; gender: string; governorate: string; city: string;
   currentAddress: string; linkedinLink: string;
+  hadEduzahService: string;
+  eduzahServiceName: string;
   university: string; faculty: string; department: string; academicStatus: string;
   graduationYear: string; gpa: string; academicAchievements: string;
   position: string; positionType: string;
@@ -290,6 +292,7 @@ const INITIAL: FormState = {
   nationalId: "",
   fullName: "", whatsapp: "", email: "", dateOfBirth: "", gender: "",
   governorate: "", city: "", currentAddress: "", linkedinLink: "",
+  hadEduzahService: "", eduzahServiceName: "",
   university: "", faculty: "", department: "", academicStatus: "", graduationYear: "",
   gpa: "", academicAchievements: "", position: "", positionType: "", skills: {},
   hasExperience: "", experiences: [], cvUrl: "", cvFilename: "", portfolioLink: "",
@@ -432,8 +435,10 @@ export function ApplyForm() {
       if (!data.dateOfBirth)                                        e.dateOfBirth   = "Date of birth is required";
       if (!data.governorate)                                        e.governorate   = "Governorate is required";
       if (!data.city.trim())                                        e.city          = "City is required";
-      if (!data.linkedinLink.trim())                                e.linkedinLink  = "LinkedIn profile link is required";
-      else if (!urlMatchesDomain(data.linkedinLink, "linkedin.com")) e.linkedinLink = "Must be a valid linkedin.com link";
+      if (!data.linkedinLink.trim())                                e.linkedinLink      = "LinkedIn profile link is required";
+      else if (!urlMatchesDomain(data.linkedinLink, "linkedin.com")) e.linkedinLink    = "Must be a valid linkedin.com link";
+      if (!data.hadEduzahService)                                   e.hadEduzahService  = "Please answer this question";
+      if (data.hadEduzahService === "Yes" && !data.eduzahServiceName.trim()) e.eduzahServiceName = "Please specify the course or service";
     }
     if (s === 2) {
       if (!data.university.trim())  e.university    = "University is required";
@@ -529,6 +534,8 @@ export function ApplyForm() {
     // LinkedIn required
     if (!data.linkedinLink.trim()) missing.push("LinkedIn Profile Link (Step 1)");
     else if (!urlMatchesDomain(data.linkedinLink, "linkedin.com")) missing.push("LinkedIn link must be a valid linkedin.com URL (Step 1)");
+    if (!data.hadEduzahService) missing.push("EDUZAH previous service question (Step 1)");
+    if (data.hadEduzahService === "Yes" && !data.eduzahServiceName.trim()) missing.push("Please specify the EDUZAH course/service (Step 1)");
 
     // Step 2
     if (!data.university.trim()) missing.push("University (Step 2)");
@@ -610,6 +617,8 @@ export function ApplyForm() {
       email: data.email, dateOfBirth: data.dateOfBirth, gender: data.gender,
       governorate: data.governorate, city: data.city, currentAddress: data.currentAddress,
       facebookLink: "", linkedinLink: data.linkedinLink,
+      hadEduzahService: data.hadEduzahService,
+      eduzahServiceName: data.eduzahServiceName,
       university: data.university, faculty: data.faculty, department: data.department,
       academicStatus: data.academicStatus, graduationYear: data.graduationYear,
       gpa: data.gpa, academicAchievements: data.academicAchievements,
@@ -866,6 +875,35 @@ export function ApplyForm() {
                         <p className="text-xs text-red-400 mt-1">Must be a linkedin.com link</p>
                       )}
                     </Field>
+                  </div>
+
+                  {/* EDUZAH previous service question */}
+                  <div className="p-4 rounded-2xl border border-[#d91b5b]/20" style={{ background: "#fff5f7" }}>
+                    <Field label="Have you previously taken a course or service at EDUZAH?" required error={errors.hadEduzahService}>
+                      <div className="flex gap-3 mt-1">
+                        {["Yes", "No"].map((opt) => (
+                          <button key={opt} type="button"
+                            onClick={() => { update("hadEduzahService", opt); if (opt === "No") update("eduzahServiceName", ""); }}
+                            className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition ${
+                              data.hadEduzahService === opt ? "text-white border-transparent" : "border-gray-200 text-gray-600 bg-white"
+                            }`}
+                            style={data.hadEduzahService === opt ? { background: "linear-gradient(135deg,#d91b5b,#faa633)" } : {}}>
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </Field>
+                    {data.hadEduzahService === "Yes" && (
+                      <div className="mt-3">
+                        <Field label="Which course or service?" required error={errors.eduzahServiceName}>
+                          <Input
+                            value={data.eduzahServiceName}
+                            onChange={(v) => update("eduzahServiceName", v)}
+                            placeholder="e.g. English Course, Digital Marketing..."
+                          />
+                        </Field>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
