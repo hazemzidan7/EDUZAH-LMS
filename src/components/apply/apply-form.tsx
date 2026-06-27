@@ -506,10 +506,10 @@ export function ApplyForm() {
           }}
         />
 
-        {/* Overlay: dark left → transparent right */}
+        {/* Overlay: brand colors gradient — red/purple on left, transparent right */}
         <div style={{
           position: "absolute", inset: 0,
-          background: "linear-gradient(to right, rgba(50,29,61,0.92) 0%, rgba(50,29,61,0.70) 38%, rgba(50,29,61,0.25) 62%, rgba(50,29,61,0.05) 100%)",
+          background: "linear-gradient(to right, rgba(50,29,61,0.97) 0%, rgba(103,45,134,0.85) 32%, rgba(217,27,91,0.40) 58%, rgba(217,27,91,0.05) 100%)",
         }} />
 
         {/* Text */}
@@ -544,7 +544,7 @@ export function ApplyForm() {
       )}
 
       {/* Progress */}
-      <div className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
+      <div className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm" style={{ borderTop: "3px solid #d91b5b" }}>
         <div className="max-w-3xl mx-auto px-4 py-3">
           {/* Mobile */}
           <div className="sm:hidden space-y-1.5">
@@ -600,7 +600,7 @@ export function ApplyForm() {
             exit={{ opacity: 0, x: -30 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 space-y-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 space-y-6" style={{ borderTop: "3px solid #d91b5b" }}>
               <div className="border-b border-gray-100 pb-4">
                 <p className="text-xs font-semibold uppercase tracking-widest text-[#d91b5b] mb-1">
                   Step {step} of {TOTAL_STEPS}
@@ -743,7 +743,7 @@ export function ApplyForm() {
                   <PositionGroup
                     title="Technical Internships"
                     badge="Internship — Unpaid"
-                    badgeColor="#d91b5b"
+                    badgeColor="#672d86"
                     positions={POSITIONS.filter((p) => p.type === "technical_internship")}
                     selected={data.position}
                     onSelect={(pos) => { update("position", pos.name); update("positionType", pos.type); update("skills", {}); }}
@@ -751,7 +751,7 @@ export function ApplyForm() {
                   <PositionGroup
                     title="Non-Technical Internships"
                     badge="Internship — Unpaid"
-                    badgeColor="#d91b5b"
+                    badgeColor="#672d86"
                     positions={POSITIONS.filter((p) => p.type === "non_technical_internship")}
                     selected={data.position}
                     onSelect={(pos) => { update("position", pos.name); update("positionType", pos.type); update("skills", {}); }}
@@ -759,7 +759,7 @@ export function ApplyForm() {
                   <PositionGroup
                     title="Paid Positions"
                     badge="Paid Position"
-                    badgeColor="#10B981"
+                    badgeColor="#faa633"
                     positions={POSITIONS.filter((p) => p.type === "paid")}
                     selected={data.position}
                     onSelect={(pos) => { update("position", pos.name); update("positionType", pos.type); update("skills", {}); }}
@@ -1114,7 +1114,7 @@ function PositionCard({ pos, selected, onClick }: { pos: PositionDef; selected: 
         {selected && <span className="text-[#d91b5b] font-bold text-lg">✓</span>}
       </div>
       <div className="flex items-center gap-2 mt-1 flex-wrap">
-        <p className={`text-xs ${pos.type === "paid" ? "text-green-600" : "text-[#672d86]"}`}>
+        <p className="text-xs font-medium" style={{ color: pos.type === "paid" ? "#faa633" : "#672d86" }}>
           {pos.type === "paid" ? "Paid Position" : "Internship (Unpaid)"}
         </p>
         {pos.mode && (
