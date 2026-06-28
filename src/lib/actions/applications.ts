@@ -192,7 +192,8 @@ export async function getApplications(filters: ApplicationFilters = {}) {
     .select(
       "id, full_name, email, mobile, position, position_type, academic_status, graduation_year, governorate, city, cv_url, cv_filename, status, created_at, skills, portfolio_link, github_link, behance_link, why_join, skills_to_gain, value_added, one_year_vision, university, faculty, department, has_experience, experiences, hours_per_week, preferred_days, admin_notes, gender, date_of_birth, whatsapp, current_address, facebook_link, linkedin_link, can_attend_offline, can_attend_online, gpa, academic_achievements, personal_website"
     )
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(10000); // Override Supabase default 1000 row limit
 
   if (filters.position) query = query.eq("position", filters.position);
   if (filters.positionType) query = query.eq("position_type", filters.positionType);
