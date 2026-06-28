@@ -21,9 +21,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <DashboardProvider profile={profile as Profile} notifications={notifications ?? []}>
-      <div className="flex min-h-screen flex-col lg:flex-row">
+      <div className="flex min-h-screen flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
         <Sidebar role={(profile as Profile).role} />
-        <main className="flex-1 overflow-x-hidden">{children}</main>
+        <main className="flex-1 overflow-x-hidden lg:overflow-y-auto">{children}</main>
       </div>
     </DashboardProvider>
   );
